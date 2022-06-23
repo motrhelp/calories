@@ -3,8 +3,10 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import { Accordion, AccordionDetails, AccordionSummary, AppBar, Card, CardActions, CardContent, IconButton, Toolbar, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, AppBar, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, IconButton, Slide, Toolbar, Typography } from '@mui/material';
+
 import { ArrowBackIos } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,57 +15,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-export default function Demo() {
-
-    function Row({ food, disabled }) {
-        return (
-            <Accordion disabled={disabled}>
-                <AccordionSummary
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    {food ?
-                        <Stack
-                            direction={'row'}
-                            sx={{
-                                width: '100%',
-                            }}>
-                            <Typography variant='subtitle2' sx={{ width: '80%' }}>{food.title}</Typography>
-                            <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{food.amount}</Typography>
-                            <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>{food.calories}</Typography>
-                        </Stack>
-                        : null}
-                </AccordionSummary>
-                <AccordionDetails>
-
-                    <TableContainer component={Paper}>
-                        <Table sx={{ width: '100%' }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Protein</TableCell>
-                                    <TableCell align="center">Fat</TableCell>
-                                    <TableCell align="center">Carbs</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                    <TableRow
-                                        key={food.name}
-                                        // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell align="center">10</TableCell>
-                                        <TableCell align="center">12</TableCell>
-                                        <TableCell align="center">1</TableCell>
-                                    </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
-    var items = [
+function loadFood() {
+    return [
         {
             title: "AH Muesli fruit овсянка",
             amount: 70,
@@ -153,7 +106,75 @@ export default function Demo() {
             amount: 40,
             calories: 255.6
         },
+        {
+            disabled: true
+        },
     ]
+
+}
+
+
+export default function Demo() {
+
+    const [items, setItems] = React.useState(loadFood());
+
+    function Row({ food, disabled }) {
+        return (
+            <Accordion disabled={disabled} onClick={() => {
+                if (disabled) {
+                    alert("Working on it")
+                } else { }
+            }}>
+                <AccordionSummary
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                >
+                    <Stack
+                        direction={'row'}
+                        sx={{
+                            width: '100%',
+                        }}>
+                        {
+                            disabled ?
+                                <AddIcon />
+                                : null
+                        }
+                        {food ?
+                            <React.Fragment>
+                                <Typography variant='subtitle2' sx={{ width: '80%' }}>{food.title}</Typography>
+                                <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{food.amount}</Typography>
+                                <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>{food.calories}</Typography>
+                            </React.Fragment>
+                            : null}
+                    </Stack>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ width: '100%' }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Protein</TableCell>
+                                    <TableCell align="center">Fat</TableCell>
+                                    <TableCell align="center">Carbs</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow
+                                    key={food.name}
+                                // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="center">10</TableCell>
+                                    <TableCell align="center">12</TableCell>
+                                    <TableCell align="center">1</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                </AccordionDetails>
+            </Accordion>
+        )
+    }
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -179,6 +200,7 @@ export default function Demo() {
             {items.map(item =>
                 <Row food={item} disabled={item.disabled} />
             )}
+
         </Box>
     );
 }
