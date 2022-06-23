@@ -120,11 +120,7 @@ export default function Demo() {
 
     function Row({ food, disabled }) {
         return (
-            <Accordion disabled={disabled} onClick={() => {
-                if (disabled) {
-                    alert("Working on it")
-                } else { }
-            }}>
+            <Accordion>
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -136,7 +132,9 @@ export default function Demo() {
                         }}>
                         {
                             disabled ?
-                                <AddIcon />
+                                <AddIcon
+                                    sx={{ width: '100%' }}
+                                />
                                 : null
                         }
                         {food ?
@@ -149,27 +147,31 @@ export default function Demo() {
                     </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ width: '100%' }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Protein</TableCell>
-                                    <TableCell align="center">Fat</TableCell>
-                                    <TableCell align="center">Carbs</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow
-                                    key={food.name}
-                                // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center">10</TableCell>
-                                    <TableCell align="center">12</TableCell>
-                                    <TableCell align="center">1</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    {disabled ?
+                        null
+                        :
+                        <TableContainer component={Paper}>
+                            <Table sx={{ width: '100%' }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Protein</TableCell>
+                                        <TableCell align="center">Fat</TableCell>
+                                        <TableCell align="center">Carbs</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow
+                                        key={food.name}
+                                    // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell align="center">10</TableCell>
+                                        <TableCell align="center">12</TableCell>
+                                        <TableCell align="center">1</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    }
 
                 </AccordionDetails>
             </Accordion>
