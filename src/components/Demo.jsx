@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import { Accordion, AccordionDetails, AccordionSummary, AppBar, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, IconButton, Slide, Toolbar, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, AppBar, Autocomplete, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, IconButton, Slide, TextField, Toolbar, Typography } from '@mui/material';
 
 import { ArrowBackIos } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,7 +15,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-function loadFood() {
+function loadRecords() {
     return [
         {
             title: "AH Muesli fruit овсянка",
@@ -110,17 +110,31 @@ function loadFood() {
             disabled: true
         },
     ]
-
 }
-
 
 export default function Demo() {
 
-    const [items, setItems] = React.useState(loadFood());
+    const [records, setRecords] = React.useState();
+    const [food, setFood] = React.useState();
+    const [test, setTest] = React.useState("Nothing");
+    const [expanded, setExpanded] = React.useState(false);
 
-    function Row({ food, disabled }) {
+    React.useEffect(() => {
+        setRecords(loadRecords());
+        setFood(loadRecords());
+    }, [])
+
+    const handleAccordionChange = index => (event, isExpanded) => {
+        setExpanded(isExpanded ? index : false);
+    }
+
+    function Row({ record, index }) {
         return (
-            <Accordion>
+            <Accordion
+                key={index}
+                expanded={expanded === index}
+                onChange={handleAccordionChange(index)}
+            >
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -131,24 +145,53 @@ export default function Demo() {
                             width: '100%',
                         }}>
                         {
-                            disabled ?
+                            record.disabled ?
                                 <AddIcon
                                     sx={{ width: '100%' }}
                                 />
                                 : null
                         }
-                        {food ?
+                        {record && !record.disabled ?
                             <React.Fragment>
-                                <Typography variant='subtitle2' sx={{ width: '80%' }}>{food.title}</Typography>
-                                <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{food.amount}</Typography>
-                                <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>{food.calories}</Typography>
+                                <Typography variant='subtitle2' sx={{ width: '80%' }}>{record.title}</Typography>
+                                <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
+                                <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
+                                    {Math.round(record.amount / 100 * record.calories)}
+                                </Typography>
                             </React.Fragment>
                             : null}
                     </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {disabled ?
-                        null
+                    {record.disabled ?
+                        <React.Fragment>
+                            <Autocomplete
+                                disablePortal
+                                options={food.filter((food) => food.title != null)}
+                                renderInput={(params) => <TextField {...params} label="Food" />}
+                                getOptionLabel={(food) => food.title}
+                                onChange={(event, newValue) => {
+                                    setTest(newValue.title);
+                                }}
+                                sx={{
+                                    width: '100%',
+                                    paddingBottom: 2
+                                }}
+                            />
+                            <Stack
+                                direction={'row'}
+                                sx={{
+                                    width: '100%',
+                                }}>
+                                <React.Fragment>
+                                    <Typography variant='subtitle2' sx={{ width: '80%' }}>{test}</Typography>
+                                    <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{1}</Typography>
+                                    <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
+                                        {169}
+                                    </Typography>
+                                </React.Fragment>
+                            </Stack>
+                        </React.Fragment>
                         :
                         <TableContainer component={Paper}>
                             <Table sx={{ width: '100%' }} aria-label="simple table">
@@ -157,16 +200,18 @@ export default function Demo() {
                                         <TableCell align="center">Protein</TableCell>
                                         <TableCell align="center">Fat</TableCell>
                                         <TableCell align="center">Carbs</TableCell>
+                                        <TableCell align="center">Calories</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     <TableRow
-                                        key={food.name}
+                                        key={record.name}
                                     // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell align="center">10</TableCell>
                                         <TableCell align="center">12</TableCell>
                                         <TableCell align="center">1</TableCell>
+                                        <TableCell align="center">10</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -199,8 +244,8 @@ export default function Demo() {
                 </Toolbar>
             </AppBar>
 
-            {items.map(item =>
-                <Row food={item} disabled={item.disabled} />
+            {records?.map((item, index) =>
+                <Row record={item} index={index} />
             )}
 
         </Box>
