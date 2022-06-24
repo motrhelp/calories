@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import { Accordion, AccordionDetails, AccordionSummary, AppBar, Autocomplete, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, IconButton, Slide, TextField, Toolbar, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, AppBar, Autocomplete, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, Grid, IconButton, Slide, TextField, Toolbar, Typography } from '@mui/material';
 
 import { ArrowBackIos } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
@@ -116,7 +116,7 @@ export default function Demo() {
 
     const [records, setRecords] = React.useState();
     const [food, setFood] = React.useState();
-    const [test, setTest] = React.useState("Nothing");
+    const [test, setTest] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
 
     React.useEffect(() => {
@@ -280,34 +280,43 @@ export default function Demo() {
                     </AccordionSummary>
                     <AccordionDetails>
                         {record.disabled ?
-                            <React.Fragment>
-                                <Autocomplete
-                                    disablePortal
-                                    options={food.filter((food) => food.title != null)}
-                                    renderInput={(params) => <TextField {...params} label="Food" />}
-                                    getOptionLabel={(food) => food.title}
-                                    onChange={(event, newValue) => {
-                                        setTest(newValue.title);
-                                    }}
-                                    sx={{
-                                        width: '100%',
-                                        paddingBottom: 2
-                                    }}
-                                />
-                                <Stack
-                                    direction={'row'}
-                                    sx={{
-                                        width: '100%',
-                                    }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <Autocomplete
+                                        disablePortal
+                                        options={food.filter((food) => food.title != null)}
+                                        renderInput={(params) => <TextField {...params} label="Food" />}
+                                        getOptionLabel={(food) => food.title}
+                                        onChange={(event, newValue) => {
+                                            setTest(newValue.title);
+                                        }}
+                                    />
+                                </Grid>
+                                {test ?
                                     <React.Fragment>
-                                        <Typography variant='subtitle2' sx={{ width: '80%' }}>{test}</Typography>
-                                        <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{1}</Typography>
-                                        <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
-                                            {169}
-                                        </Typography>
+                                        <Grid item xs={8}>
+                                            <Typography variant='subtitle2'>{test}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant='body2' sx={{ alignSelf: 'center' }}>{1}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant='subtitle2' sx={{ alignSelf: 'center', textAlign: 'right' }}>
+                                                {169}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={10} />
+                                        <Grid item xs={2}>
+                                            <Button onClick={() => {
+                                                setTest(null);
+                                                setExpanded(false);
+                                            }}>
+                                                ADD
+                                            </Button>
+                                        </Grid>
                                     </React.Fragment>
-                                </Stack>
-                            </React.Fragment>
+                                    : null}
+                            </Grid>
                             :
                             <TableContainer component={Paper}>
                                 <Table sx={{ width: '100%' }} aria-label="simple table">
