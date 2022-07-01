@@ -155,6 +155,15 @@ export default function Demo() {
         return records.reduce((acc, record) => acc + calculateCalories(record.amount, record.calories), 0);
     }
 
+    // Format date to a dd MMM yyyy string
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
             <AppBar position='sticky'>
@@ -168,13 +177,13 @@ export default function Demo() {
                     <Typography variant="h6" sx={{
                         flexGrow: 1
                     }}>
-                        12 Feb 2022
+                        {formatDate(new Date())}
                     </Typography>
                     <Typography variant="h6" >
                         {
                             // Sum of all calories
                             records ? calculateTotalCalories() : 0
-                        } 
+                        }
                         &nbsp;/ 2000
                     </Typography>
                 </Toolbar>
@@ -306,7 +315,7 @@ export default function Demo() {
                 </Accordion>
             )}
 
-            {expanded || selecting ?
+            {expanded !== false || selecting ?
                 <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar sx={{ justifyContent: 'space-evenly', }}>
                         <IconButton color="inherit" onClick={() => {
