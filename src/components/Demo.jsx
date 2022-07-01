@@ -120,7 +120,6 @@ export default function Demo() {
     const [adding, setAdding] = React.useState(null);
     const [addingAmount, setAddingAmount] = React.useState();
     const [expanded, setExpanded] = React.useState(false);
-    const [showBottomMenu, setShowBottomMenu] = React.useState(false);
     const [selecting, setSelecting] = React.useState(false);
     const [selectedRecords, setSelectedRecords] = React.useState([]);
 
@@ -139,7 +138,6 @@ export default function Demo() {
         } else {
             let newExpanded = isExpanded ? index : false
             setExpanded(newExpanded);
-            setShowBottomMenu(newExpanded);
         }
     }
 
@@ -297,7 +295,7 @@ export default function Demo() {
                 </Accordion>
             )}
 
-            {showBottomMenu ?
+            {expanded || selecting ?
                 <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar sx={{ justifyContent: 'space-evenly', }}>
                         <IconButton color="inherit">
