@@ -298,7 +298,17 @@ export default function Demo() {
             {expanded || selecting ?
                 <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar sx={{ justifyContent: 'space-evenly', }}>
-                        <IconButton color="inherit">
+                        <IconButton color="inherit" onClick={() => {
+                            if (selecting) {
+                                // Remove every selected record
+                                setRecords(records.filter((record, index) => !selectedRecords.includes(index)));
+                                setSelectedRecords([]);
+                            } else {
+                                // Remove expanded record
+                                setRecords(records.filter((record, index) => index !== expanded));
+                                setExpanded(null);
+                            }
+                        }}>
                             <DeleteIcon />
                         </IconButton>
                         <IconButton color="inherit"
@@ -314,6 +324,22 @@ export default function Demo() {
                             }}>
                             <LibraryAddCheckIcon
                             />
+                        </IconButton>
+                        <IconButton color="inherit"
+                            onClick={() => {
+                                if (expanded) {
+                                    // Insert record after expanded
+                                    records.splice(expanded + 1, 0, {
+                                        disabled: true,
+                                    });
+
+                                    // Expand the new record
+                                    setExpanded(expanded + 1);
+
+                                    console.log(records);
+                                }
+                            }}>
+                            <AddIcon />
                         </IconButton>
                     </Toolbar>
                 </AppBar>
