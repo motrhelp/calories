@@ -298,7 +298,7 @@ export default function Demo() {
             )}
 
             {showBottomMenu ?
-                <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
+                <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar sx={{ justifyContent: 'space-evenly', }}>
                         <IconButton color="inherit">
                             <DeleteIcon />
