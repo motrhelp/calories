@@ -101,11 +101,6 @@ function loadRecords() {
             title: "Bolletje Zoute pepsels paluszki",
             amount: 50,
             calories: 193
-        }, ,
-        {
-            title: "AH Pistachenoten gezouten фисташки соленые",
-            amount: 40,
-            calories: 255.6
         },
         {
             disabled: true
@@ -148,6 +143,18 @@ export default function Demo() {
         return diff < 10000;
     }
 
+    const calculateCalories = (amount, calories) => {
+        if (calories && amount) {
+            return Math.round(amount / 100 * calories)
+        } else {
+            return 0;
+        }
+    }
+
+    const calculateTotalCalories = () => {
+        return records.reduce((acc, record) => acc + calculateCalories(record.amount, record.calories), 0);
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
             <AppBar position='sticky'>
@@ -163,8 +170,12 @@ export default function Demo() {
                     }}>
                         12 Feb 2022
                     </Typography>
-                    <Typography variant="h6">
-                        1800 / 2000
+                    <Typography variant="h6" >
+                        {
+                            // Sum of all calories
+                            records ? calculateTotalCalories() : 0
+                        } 
+                        &nbsp;/ 2000
                     </Typography>
                 </Toolbar>
             </AppBar>
