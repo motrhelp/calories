@@ -6,11 +6,11 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import Demo from './components/Demo';
+import Calories from './components/Demo';
 
 function App() {
   return (
-    <Demo />
+    <Calories />
   );
 }
 

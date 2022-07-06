@@ -8,6 +8,7 @@ import { ArrowBackIos } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -108,7 +109,7 @@ function loadRecords() {
     ]
 }
 
-export default function Demo() {
+export default function Calories() {
 
     const [records, setRecords] = React.useState();
     const [food, setFood] = React.useState();
@@ -345,22 +346,42 @@ export default function Demo() {
                             <LibraryAddCheckIcon
                             />
                         </IconButton>
-                        <IconButton color="inherit"
-                            onClick={() => {
-                                if (expanded) {
-                                    // Insert record after expanded
-                                    records.splice(expanded + 1, 0, {
-                                        disabled: true,
-                                    });
+                        {!selecting ?
+                            <IconButton color="inherit"
+                                onClick={() => {
+                                    if (expanded) {
+                                        // Insert record after expanded
+                                        records.splice(expanded + 1, 0, {
+                                            disabled: true,
+                                        });
 
-                                    // Expand the new record
-                                    setExpanded(expanded + 1);
+                                        // Expand the new record
+                                        setExpanded(expanded + 1);
 
-                                    console.log(records);
-                                }
-                            }}>
-                            <AddIcon />
-                        </IconButton>
+                                        console.log(records);
+                                    }
+                                }}>
+                                <AddIcon />
+                            </IconButton>
+                            :
+                            <IconButton color="inherit"
+                                onClick={() => {
+                                    // copy selected records
+                                    setRecords([...records,
+                                    ...selectedRecords.map((index) => records[index])
+                                        // update created date
+                                        .map((record) => { record.created = new Date(); return record; })
+                                    ]);
+
+
+                                    // clear selection
+                                    setSelectedRecords([]);
+                                    setSelecting(false);
+                                }}
+                            >
+                                <ContentCopyIcon />
+                            </IconButton>
+                        }
                     </Toolbar>
                 </AppBar>
                 : null
