@@ -9,6 +9,9 @@ import AddIcon from '@mui/icons-material/Add';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -114,6 +117,7 @@ export default function Calories() {
     const [records, setRecords] = React.useState();
     const [food, setFood] = React.useState();
     const [adding, setAdding] = React.useState(null);
+    const [editing, setEditing] = React.useState(null);
     const [addingAmount, setAddingAmount] = React.useState();
     const [expanded, setExpanded] = React.useState(false);
     const [selecting, setSelecting] = React.useState(false);
@@ -319,68 +323,96 @@ export default function Calories() {
             {expanded !== false || selecting ?
                 <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar sx={{ justifyContent: 'space-evenly', }}>
-                        <IconButton color="inherit" onClick={() => {
-                            if (selecting) {
-                                // Remove every selected record
-                                setRecords(records.filter((record, index) => !selectedRecords.includes(index)));
-                                setSelectedRecords([]);
-                            } else {
-                                // Remove expanded record
-                                setRecords(records.filter((record, index) => index !== expanded));
-                                setExpanded(null);
-                            }
-                        }}>
-                            <DeleteIcon />
-                        </IconButton>
-                        <IconButton color="inherit"
-                            onClick={() => {
-                                if (selecting) {
-                                    setSelectedRecords([]);
-                                    setSelecting(false);
-                                } else {
-                                    setSelecting(true);
-                                    setSelectedRecords([expanded]);
-                                    setExpanded(false);
-                                }
-                            }}>
-                            <LibraryAddCheckIcon
-                            />
-                        </IconButton>
-                        {!selecting ?
-                            <IconButton color="inherit"
-                                onClick={() => {
-                                    if (expanded) {
-                                        // Insert record after expanded
-                                        records.splice(expanded + 1, 0, {
-                                            disabled: true,
-                                        });
 
-                                        // Expand the new record
-                                        setExpanded(expanded + 1);
+                        {editing ?
+                            <React.Fragment>
+                                <IconButton color="inherit" onClick={() => {
 
-                                        console.log(records);
+                                }}>
+                                    <CloseIcon />
+                                </IconButton>
+                                <IconButton color="inherit" onClick={() => {
+
+                                }}>
+                                    <CheckIcon />
+                                </IconButton>
+                            </React.Fragment>
+                            :
+                            <React.Fragment>
+
+                                <IconButton color="inherit" onClick={() => {
+                                    if (selecting) {
+                                        // Remove every selected record
+                                        setRecords(records.filter((record, index) => !selectedRecords.includes(index)));
+                                        setSelectedRecords([]);
+                                    } else {
+                                        // Remove expanded record
+                                        setRecords(records.filter((record, index) => index !== expanded));
+                                        setExpanded(null);
                                     }
                                 }}>
-                                <AddIcon />
-                            </IconButton>
-                            :
-                            <IconButton color="inherit"
-                                onClick={() => {
-                                    // copy selected records
-                                    setRecords([...records,
-                                    ...selectedRecords.map((index) => records[index])
-                                        // update created date
-                                        .map((record) => { record.created = new Date(); return record; })
-                                    ]);
+                                    <DeleteIcon />
+                                </IconButton>
+                                <IconButton color="inherit"
+                                    onClick={() => {
+                                        if (selecting) {
+                                            setSelectedRecords([]);
+                                            setSelecting(false);
+                                        } else {
+                                            setSelecting(true);
+                                            setSelectedRecords([expanded]);
+                                            setExpanded(false);
+                                        }
+                                    }}>
+                                    <LibraryAddCheckIcon
+                                    />
+                                </IconButton>
+                                {!selecting ?
+                                    <React.Fragment>
+                                        <IconButton color="inherit"
+                                            onClick={() => {
+                                                if (expanded) {
+                                                    // Insert record after expanded
+                                                    records.splice(expanded + 1, 0, {
+                                                        disabled: true,
+                                                    });
 
+                                                    // Expand the new record
+                                                    setExpanded(expanded + 1);
 
-                                    // clear selection
-                                    setSelectedRecords([]);
-                                    setSelecting(false);
-                                }}
-                            >
-                                <ContentCopyIcon />
-                            </IconButton>
+                                                    console.log(records);
+                                                }
+                                            }}>
+                                            <AddIcon />
+                                        </IconButton>
+                                        <IconButton color="inherit"
+                                            onClick={() => {
+                                                if (expanded) {
+                                                    setEditing(true);
+                                                }
+                                            }}>
+                                            <EditIcon />
+                                        </IconButton>
+                                    </React.Fragment>
+                                    :
+                                    <IconButton color="inherit"
+                                        onClick={() => {
+                                            // copy selected records
+                                            setRecords([...records,
+                                            ...selectedRecords.map((index) => records[index])
+                                                // update created date
+                                                .map((record) => { record.created = new Date(); return record; })
+                                            ]);
+
+                                            // clear selection
+                                            setSelectedRecords([]);
+                                            setSelecting(false);
+                                        }}
+                                    >
+                                        <ContentCopyIcon />
+                                    </IconButton>
+                                }
+                            </React.Fragment>
                         }
                     </Toolbar>
                 </AppBar>
