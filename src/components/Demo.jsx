@@ -119,6 +119,7 @@ export default function Calories() {
     const [adding, setAdding] = React.useState(null);
     const [editing, setEditing] = React.useState(null);
     const [addingAmount, setAddingAmount] = React.useState();
+    const [editingAmount, setEditingAmount] = React.useState();
     const [expanded, setExpanded] = React.useState(false);
     const [selecting, setSelecting] = React.useState(false);
     const [selectedRecords, setSelectedRecords] = React.useState([]);
@@ -135,7 +136,7 @@ export default function Calories() {
             } else {
                 setSelectedRecords([...selectedRecords, index]);
             }
-        } else {
+        } else if (!editing) {
             let newExpanded = isExpanded ? index : false
             setExpanded(newExpanded);
         }
@@ -225,9 +226,13 @@ export default function Calories() {
                             {record && !record.disabled ?
                                 <React.Fragment>
                                     <Typography variant='subtitle2' sx={{ width: '80%', alignSelf: 'center' }}>{record.title}</Typography>
-                                    <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
+                                    {editing && expanded === index ?
+                                        <TextField value={editingAmount} onChange={e => setEditingAmount(e.target.value)} />
+                                        :
+                                        <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
+                                    }
                                     <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
-                                        {Math.round(record.amount / 100 * record.calories)}
+                                        {Math.round((editing && expanded === index && editingAmount ? editingAmount : record.amount) / 100 * record.calories)}
                                     </Typography>
                                 </React.Fragment>
                                 : null}
@@ -327,12 +332,18 @@ export default function Calories() {
                         {editing ?
                             <React.Fragment>
                                 <IconButton color="inherit" onClick={() => {
-
+                                    // Cancel editing
+                                    setEditing(false);
+                                    setEditingAmount(null);
                                 }}>
                                     <CloseIcon />
                                 </IconButton>
                                 <IconButton color="inherit" onClick={() => {
-
+                                    // Update record
+                                    records[expanded].amount = editingAmount;
+                                    setEditing(false);
+                                    setEditingAmount(null);
+                                    setExpanded(false);
                                 }}>
                                     <CheckIcon />
                                 </IconButton>
