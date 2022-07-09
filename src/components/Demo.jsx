@@ -227,7 +227,15 @@ export default function Calories() {
                                 <React.Fragment>
                                     <Typography variant='subtitle2' sx={{ width: '80%', alignSelf: 'center' }}>{record.title}</Typography>
                                     {editing && expanded === index ?
-                                        <TextField value={editingAmount} onChange={e => setEditingAmount(e.target.value)} />
+                                        <TextField
+                                            sx={{ width: '20%', alignSelf: 'center' }}
+                                            value={editingAmount}
+                                            label="Amount"
+                                            helperText={record.amount}
+                                            size="small"
+                                            type="number"
+                                            onChange={e => setEditingAmount(e.target.value)}
+                                        />
                                         :
                                         <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
                                     }
