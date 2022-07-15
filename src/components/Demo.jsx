@@ -112,9 +112,58 @@ function loadRecords() {
     ]
 }
 
+function loadCalendar() {
+    return [
+        {
+            date: new Date(Date.now())
+        },
+        {
+            date: new Date(Date.now() - (1 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (2 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (3 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (4 * 24 * 60 * 60 * 1000))
+        },
+        {
+            // Five days ago
+            date: new Date(Date.now() - (5 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (6 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (7 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (8 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (9 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (10 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (11 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (12 * 24 * 60 * 60 * 1000))
+        },
+        {
+            date: new Date(Date.now() - (13 * 24 * 60 * 60 * 1000))
+        },
+    ]
+}
+
 export default function Calories() {
 
     const [records, setRecords] = React.useState();
+    const [calendar, setCalendar] = React.useState();
     const [food, setFood] = React.useState();
     const [adding, setAdding] = React.useState(null);
     const [editing, setEditing] = React.useState(null);
@@ -125,6 +174,7 @@ export default function Calories() {
     const [selectedRecords, setSelectedRecords] = React.useState([]);
 
     React.useEffect(() => {
+        setCalendar(loadCalendar());
         setRecords(loadRecords());
         setFood(loadRecords());
     }, [])
@@ -172,7 +222,7 @@ export default function Calories() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <AppBar position='sticky'>
+            {/* <AppBar position='sticky'>
                 <Toolbar >
                     <IconButton
                         edge="start"
@@ -193,145 +243,173 @@ export default function Calories() {
                         &nbsp;/ 2000
                     </Typography>
                 </Toolbar>
-            </AppBar>
+            </AppBar> */}
 
-            {records?.map((record, index) =>
-                <Accordion
-                    key={index}
-                    expanded={expanded === index}
-                    onChange={handleAccordionChange(index)}
-                    sx={{
-                        backgroundColor: selecting ? (selectedRecords.includes(index) ? 'info.light' : null) : null,
-                    }}
-                >
+            {calendar?.reverse().map((day, index) =>
+
+                <Accordion>
                     <AccordionSummary
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                         sx={{
-                            backgroundColor: isCloseToNow(record.created) ? 'success.light' : null
+                            backgroundColor: 'primary.main',
                         }}
                     >
-                        <Stack
-                            direction={'row'}
-                            sx={{
-                                width: '100%',
-                            }}>
+                        <Typography variant="h6" sx={{
+                            flexGrow: 1
+                        }}>
+                            {formatDate(day.date)}
+                        </Typography>
+                        <Typography variant="h6" >
                             {
-                                record.disabled ?
-                                    <AddIcon
-                                        sx={{ width: '100%' }}
-                                    />
-                                    : null
+                                // Sum of all calories
+                                records ? calculateTotalCalories() : 0
                             }
-                            {record && !record.disabled ?
-                                <React.Fragment>
-                                    <Typography variant='subtitle2' sx={{ width: '80%', alignSelf: 'center' }}>{record.title}</Typography>
-                                    {editing && expanded === index ?
-                                        <TextField
-                                            sx={{ width: '20%', alignSelf: 'center' }}
-                                            value={editingAmount}
-                                            label="Amount"
-                                            helperText={record.amount}
-                                            size="small"
-                                            type="number"
-                                            onChange={e => setEditingAmount(e.target.value)}
-                                        />
-                                        :
-                                        <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
-                                    }
-                                    <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
-                                        {Math.round((editing && expanded === index && editingAmount ? editingAmount : record.amount) / 100 * record.calories)}
-                                    </Typography>
-                                </React.Fragment>
-                                : null}
-                        </Stack>
+                            &nbsp;/ 2000
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        {record.disabled ?
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Autocomplete
-                                        options={food.filter((food) => food.title != null)}
-                                        renderInput={(params) => <TextField {...params} label="Food" />}
-                                        getOptionLabel={(food) => food.title}
-                                        onChange={(event, newValue) => {
-                                            setAdding(food.find((food) => food.title === newValue.title));
-                                        }}
-                                    />
-                                </Grid>
-                                {adding ?
-                                    <React.Fragment>
-                                        <Grid item xs={7} sx={{ alignSelf: 'center' }}>
-                                            <Typography variant='subtitle2'>{adding.title}</Typography>
-                                        </Grid>
-                                        <Grid item xs={3} sx={{ alignSelf: 'center' }}>
-                                            <TextField
-                                                size='small'
-                                                label="Amount"
-                                                value={addingAmount}
-                                                onChange={(event) => {
-                                                    setAddingAmount(event.target.value);
-                                                }}
-                                                type="number"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ alignSelf: 'center', textAlign: 'right' }}>
-                                            <Typography variant='subtitle2'>
-                                                {addingAmount ?
-                                                    Math.round(addingAmount / 100 * adding.calories)
-                                                    : 0
+                        {records?.map((record, index) =>
+                            <Accordion
+                                key={index}
+                                expanded={expanded === index}
+                                onChange={handleAccordionChange(index)}
+                                sx={{
+                                    backgroundColor: selecting ? (selectedRecords.includes(index) ? 'info.light' : null) : null,
+                                }}
+                            >
+                                <AccordionSummary
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                    sx={{
+                                        backgroundColor: isCloseToNow(record.created) ? 'success.light' : null
+                                    }}
+                                >
+                                    <Stack
+                                        direction={'row'}
+                                        sx={{
+                                            width: '100%',
+                                        }}>
+                                        {
+                                            record.disabled ?
+                                                <AddIcon
+                                                    sx={{ width: '100%' }}
+                                                />
+                                                : null
+                                        }
+                                        {record && !record.disabled ?
+                                            <React.Fragment>
+                                                <Typography variant='subtitle2' sx={{ width: '80%', alignSelf: 'center' }}>{record.title}</Typography>
+                                                {editing && expanded === index ?
+                                                    <TextField
+                                                        sx={{ width: '20%', alignSelf: 'center' }}
+                                                        value={editingAmount}
+                                                        label="Amount"
+                                                        helperText={record.amount}
+                                                        size="small"
+                                                        type="number"
+                                                        onChange={e => setEditingAmount(e.target.value)}
+                                                    />
+                                                    :
+                                                    <Typography variant='body2' sx={{ width: '10%', alignSelf: 'center' }}>{record.amount}</Typography>
                                                 }
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={10} />
-                                        <Grid item xs={2}>
-                                            <Button onClick={() => {
-                                                records.splice(index, 0, {
-                                                    title: adding.title,
-                                                    amount: addingAmount,
-                                                    calories: adding.calories,
-                                                    created: new Date(),
-                                                })
+                                                <Typography variant='subtitle2' sx={{ width: '10%', alignSelf: 'center', textAlign: 'right' }}>
+                                                    {Math.round((editing && expanded === index && editingAmount ? editingAmount : record.amount) / 100 * record.calories)}
+                                                </Typography>
+                                            </React.Fragment>
+                                            : null}
+                                    </Stack>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {record.disabled ?
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12}>
+                                                <Autocomplete
+                                                    options={food.filter((food) => food.title != null)}
+                                                    renderInput={(params) => <TextField {...params} label="Food" />}
+                                                    getOptionLabel={(food) => food.title}
+                                                    onChange={(event, newValue) => {
+                                                        setAdding(food.find((food) => food.title === newValue.title));
+                                                    }}
+                                                />
+                                            </Grid>
+                                            {adding ?
+                                                <React.Fragment>
+                                                    <Grid item xs={7} sx={{ alignSelf: 'center' }}>
+                                                        <Typography variant='subtitle2'>{adding.title}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={3} sx={{ alignSelf: 'center' }}>
+                                                        <TextField
+                                                            size='small'
+                                                            label="Amount"
+                                                            value={addingAmount}
+                                                            onChange={(event) => {
+                                                                setAddingAmount(event.target.value);
+                                                            }}
+                                                            type="number"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={2} sx={{ alignSelf: 'center', textAlign: 'right' }}>
+                                                        <Typography variant='subtitle2'>
+                                                            {addingAmount ?
+                                                                Math.round(addingAmount / 100 * adding.calories)
+                                                                : 0
+                                                            }
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={10} />
+                                                    <Grid item xs={2}>
+                                                        <Button onClick={() => {
+                                                            records.splice(index, 0, {
+                                                                title: adding.title,
+                                                                amount: addingAmount,
+                                                                calories: adding.calories,
+                                                                created: new Date(),
+                                                            })
 
-                                                setAddingAmount(null);
-                                                setAdding(false);
-                                                setExpanded(false);
-                                            }}>
-                                                ADD
-                                            </Button>
+                                                            setAddingAmount(null);
+                                                            setAdding(false);
+                                                            setExpanded(false);
+                                                        }}>
+                                                            ADD
+                                                        </Button>
+                                                    </Grid>
+                                                </React.Fragment>
+                                                : null}
                                         </Grid>
-                                    </React.Fragment>
-                                    : null}
-                            </Grid>
-                            :
-                            <TableContainer component={Paper}>
-                                <Table sx={{ width: '100%' }} aria-label="simple table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Protein</TableCell>
-                                            <TableCell align="center">Fat</TableCell>
-                                            <TableCell align="center">Carbs</TableCell>
-                                            <TableCell align="center">Calories</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        <TableRow
-                                            key={record.name}
-                                        // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="center">10</TableCell>
-                                            <TableCell align="center">12</TableCell>
-                                            <TableCell align="center">1</TableCell>
-                                            <TableCell align="center">10</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        }
+                                        :
+                                        <TableContainer component={Paper}>
+                                            <Table sx={{ width: '100%' }} aria-label="simple table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center">Protein</TableCell>
+                                                        <TableCell align="center">Fat</TableCell>
+                                                        <TableCell align="center">Carbs</TableCell>
+                                                        <TableCell align="center">Calories</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    <TableRow
+                                                        key={record.name}
+                                                    // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                    >
+                                                        <TableCell align="center">10</TableCell>
+                                                        <TableCell align="center">12</TableCell>
+                                                        <TableCell align="center">1</TableCell>
+                                                        <TableCell align="center">10</TableCell>
+                                                    </TableRow>
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    }
 
+                                </AccordionDetails>
+                            </Accordion>
+                        )}
                     </AccordionDetails>
                 </Accordion>
             )}
+
 
             {expanded !== false || selecting ?
                 <AppBar position="sticky" sx={{ top: 'auto', bottom: 0 }}>
