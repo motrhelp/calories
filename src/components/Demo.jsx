@@ -170,6 +170,7 @@ export default function Calories() {
     const [addingAmount, setAddingAmount] = React.useState();
     const [editingAmount, setEditingAmount] = React.useState();
     const [expanded, setExpanded] = React.useState(false);
+    const [dayExpanded, setDayExpanded] = React.useState(false);
     const [selecting, setSelecting] = React.useState(false);
     const [selectedRecords, setSelectedRecords] = React.useState([]);
 
@@ -189,6 +190,12 @@ export default function Calories() {
         } else if (!editing) {
             let newExpanded = isExpanded ? index : false
             setExpanded(newExpanded);
+        }
+    }
+
+    const handleDayAccordionChange = index => (event, isExpanded) => {
+        if (!editing) {
+            setDayExpanded(isExpanded ? index : false);
         }
     }
 
@@ -216,43 +223,48 @@ export default function Calories() {
         return new Date(date).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'long',
-            year: 'numeric'
         });
     }
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* <AppBar position='sticky'>
-                <Toolbar >
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                    >
-                        <ArrowBackIos />
-                    </IconButton>
-                    <Typography variant="h6" sx={{
-                        flexGrow: 1
-                    }}>
-                        {formatDate(new Date())}
-                    </Typography>
-                    <Typography variant="h6" >
-                        {
-                            // Sum of all calories
-                            records ? calculateTotalCalories() : 0
-                        }
-                        &nbsp;/ 2000
-                    </Typography>
-                </Toolbar>
-            </AppBar> */}
+            {dayExpanded ?
+                <AppBar position='sticky'>
+                    <Toolbar >
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                        >
+                            <ArrowBackIos />
+                        </IconButton>
+                        <Typography variant="h6" sx={{
+                            flexGrow: 1
+                        }}>
+                            {formatDate(calendar[dayExpanded].date)}
+                        </Typography>
+                        <Typography variant="h6" >
+                            {
+                                // Sum of all calories
+                                records ? calculateTotalCalories() : 0
+                            }
+                            &nbsp;/ 2000
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                : null}
 
-            {calendar?.reverse().map((day, index) =>
+            {calendar?.map((day, index) =>
 
-                <Accordion>
+                <Accordion
+                    key={"day" + index}
+                    expanded={dayExpanded === index}
+                    onChange={handleDayAccordionChange(index)}
+                >
                     <AccordionSummary
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                         sx={{
-                            backgroundColor: 'primary.main',
+                            backgroundColor: '#f5f5f5',
                         }}
                     >
                         <Typography variant="h6" sx={{
